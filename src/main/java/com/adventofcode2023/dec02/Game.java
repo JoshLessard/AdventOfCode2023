@@ -1,7 +1,6 @@
 package com.adventofcode2023.dec02;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 class Game {
 
@@ -11,8 +10,10 @@ class Game {
         this.cubeSelections = List.copyOf( cubeSelections );
     }
 
-    Stream<CubeSelection> cubeSelections() {
-        return cubeSelections.stream();
+    boolean isPossibleWith( Bag bag ) {
+        return cubeSelections
+            .stream()
+            .allMatch( bag::containsEnoughCubesToSatisfy );
     }
 
     CubeSelection fewestCubesRequiredToBePossible() {
