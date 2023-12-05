@@ -1,14 +1,11 @@
 package com.adventofcode2023.dec05;
 
-import static java.util.stream.Collectors.toSet;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,7 +16,7 @@ public class Main {
 
     public static void main( String[] args ) throws IOException {
         try ( BufferedReader reader = new BufferedReader( new FileReader( "src/main/resources/dec05/input.txt" ) ) ) {
-            Set<Long> seeds = parseSeeds( reader );
+            List<Long> seeds = parseSeeds( reader );
             GardenMap gardenMap = parseGardenMap( reader );
             long closestLocation = seeds.stream()
                 .mapToLong( gardenMap::mapSeedToLocation )
@@ -41,12 +38,12 @@ public class Main {
         );
     }
 
-    private static Set<Long> parseSeeds( BufferedReader reader ) throws IOException {
+    private static List<Long> parseSeeds( BufferedReader reader ) throws IOException {
         Matcher matcher = SEEDS_PATTERN.matcher( reader.readLine() );
         if ( matcher.matches() ) {
-            Set<Long> seeds = Arrays.stream( matcher.group( 1 ).trim().split( "\\s+" ) )
+            List<Long> seeds = Arrays.stream( matcher.group( 1 ).trim().split( "\\s+" ) )
                 .map( Long::valueOf )
-                .collect( toSet() );
+                .toList();
             reader.readLine(); // skip blank line
             return seeds;
         } else {
@@ -56,7 +53,7 @@ public class Main {
 
     private static CategoryMap parseCategoryMap( BufferedReader reader, String sourceCategory, String destinationCategory ) throws IOException {
         ensureExpectedMapTitle( reader, sourceCategory, destinationCategory );
-        List<CategoryRange> categoryRanges = new ArrayList<>();
+        List<CategoryMappingRange> mappingRanges = new ArrayList<>();
         String line;
         while ( ( line = reader.readLine() ) != null && ! line.isBlank() ) {
             Matcher matcher = MAP_RANGE_PATTERN.matcher( line );
@@ -64,12 +61,12 @@ public class Main {
                 long destinationRangeStart = Long.parseLong( matcher.group( 1 ) );
                 long sourceRangeStart = Long.parseLong( matcher.group( 2 ) );
                 long rangeSize = Long.parseLong( matcher.group( 3 ) );
-                categoryRanges.add( new CategoryRange( destinationRangeStart, sourceRangeStart, rangeSize ) );
+                mappingRanges.add( new CategoryMappingRange( destinationRangeStart, sourceRangeStart, rangeSize ) );
             } else {
                 throw new IllegalArgumentException();
             }
         }
-        return new CategoryMap( categoryRanges );
+        return new CategoryMap( mappingRanges );
     }
 
     private static void ensureExpectedMapTitle( BufferedReader reader, String sourceCategory, String destinationCategory ) throws IOException {
