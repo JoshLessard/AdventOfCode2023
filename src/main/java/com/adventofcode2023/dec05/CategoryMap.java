@@ -37,6 +37,6 @@ class CategoryMap {
             .filter( range -> range.isInSourceRange( source ) )
             .findFirst()
             .map( range -> range.mapSourceToDestination( source ) )
-            .orElse( source ); // TODO Need to handle seed ranges before first and after last ranges
+            .orElse( source ); // TODO Need to handle seed range after last mapping range
     }
 }
