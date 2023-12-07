@@ -21,8 +21,12 @@ class CategoryMap {
         long previousRangeEndExclusive = 0L;
         for ( CategoryMappingRange currentMappingRange : mappingRangesWithPossibleGaps ) {
             if ( currentMappingRange.sourceRangeStartInclusive() > previousRangeEndExclusive ) {
-                CategoryMappingRange mappingRangeForGap = new CategoryMappingRange( previousRangeEndExclusive, previousRangeEndExclusive, currentMappingRange.sourceRangeStartInclusive() - previousRangeEndExclusive );
-                sortedAndCompleteRanges.add( mappingRangeForGap );
+                CategoryMappingRange nonMappingRangeForGap = new CategoryMappingRange(
+                    previousRangeEndExclusive,
+                    currentMappingRange.sourceRangeStartInclusive(),
+                    0L
+                );
+                sortedAndCompleteRanges.add( nonMappingRangeForGap );
             }
             sortedAndCompleteRanges.add( currentMappingRange );
             previousRangeEndExclusive = currentMappingRange.sourceRangeEndExclusive();

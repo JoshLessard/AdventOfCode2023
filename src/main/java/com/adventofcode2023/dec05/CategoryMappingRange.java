@@ -6,10 +6,10 @@ class CategoryMappingRange {
     private final long sourceRangeEndExclusive;
     private final long sourceToDestinationDelta;
 
-    CategoryMappingRange( long destinationRangeStart, long sourceRangeStart, long rangeSize ) {
-        this.sourceRangeStartInclusive = sourceRangeStart;
-        this.sourceRangeEndExclusive = sourceRangeStart + rangeSize;
-        this.sourceToDestinationDelta = destinationRangeStart - sourceRangeStart;
+    CategoryMappingRange( long sourceRangeStartInclusive, long sourceRangeEndExclusive, long sourceToDestinationDelta ) {
+        this.sourceRangeStartInclusive = sourceRangeStartInclusive;
+        this.sourceRangeEndExclusive = sourceRangeEndExclusive;
+        this.sourceToDestinationDelta = sourceToDestinationDelta;
     }
 
     long sourceRangeStartInclusive() {

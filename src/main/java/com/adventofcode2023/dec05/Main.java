@@ -61,7 +61,12 @@ public class Main {
                 long destinationRangeStart = Long.parseLong( matcher.group( 1 ) );
                 long sourceRangeStart = Long.parseLong( matcher.group( 2 ) );
                 long rangeSize = Long.parseLong( matcher.group( 3 ) );
-                mappingRanges.add( new CategoryMappingRange( destinationRangeStart, sourceRangeStart, rangeSize ) );
+                CategoryMappingRange mappingRange = new CategoryMappingRange(
+                    sourceRangeStart,
+                    sourceRangeStart + rangeSize,
+                    destinationRangeStart - sourceRangeStart
+                );
+                mappingRanges.add( mappingRange );
             } else {
                 throw new IllegalArgumentException();
             }
