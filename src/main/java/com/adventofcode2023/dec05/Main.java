@@ -28,8 +28,28 @@ public class Main {
                 .min( comparing( CategoryRange::startInclusive ) )
                 .map( CategoryRange::startInclusive )
                 .orElseThrow();
-            System.out.println( "The closest location is " + closestLocation );
+            System.out.println( "The closest location for Part 1 is " + closestLocation );
+
+            List<CategoryRange> seedRanges = toSeedRanges( seeds );
+            long closestLocation2 = seedRanges
+                .stream()
+                .map( gardenMap::mapSeedsToLocations )
+                .flatMap( List::stream )
+                .min( comparing( CategoryRange::startInclusive ) )
+                .map( CategoryRange::startInclusive )
+                .orElseThrow();
+            System.out.println( "The closest location for Part 2 is " + closestLocation2 );
         }
+    }
+
+    private static List<CategoryRange> toSeedRanges( List<Long> seeds ) {
+        List<CategoryRange> seedRanges = new ArrayList<>();
+        for ( int i = 0; i < seeds.size(); i += 2 ) {
+            long rangeStart = seeds.get( i );
+            long rangeSize = seeds.get( i + 1 );
+            seedRanges.add( new CategoryRange( rangeStart, rangeStart + rangeSize ) );
+        }
+        return seedRanges;
     }
 
     private static GardenMap parseGardenMap( BufferedReader reader ) throws IOException {
