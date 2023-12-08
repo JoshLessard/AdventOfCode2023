@@ -15,21 +15,21 @@ class CategoryMap {
 
     private static List<CategoryMappingRange> sortAndFillInRangeGaps( List<CategoryMappingRange> inputMappingRanges ) {
         List<CategoryMappingRange> mappingRangesWithPossibleGaps = new ArrayList<>( inputMappingRanges );
-        mappingRangesWithPossibleGaps.sort( comparing( CategoryMappingRange::sourceRangeStartInclusive ) );
+        mappingRangesWithPossibleGaps.sort( comparing( CategoryMappingRange::mappingRangeStartInclusive ) );
 
         List<CategoryMappingRange> sortedAndCompleteRanges = new ArrayList<>();
         long previousRangeEndExclusive = 0L;
         for ( CategoryMappingRange currentMappingRange : mappingRangesWithPossibleGaps ) {
-            if ( currentMappingRange.sourceRangeStartInclusive() > previousRangeEndExclusive ) {
+            if ( currentMappingRange.mappingRangeStartInclusive() > previousRangeEndExclusive ) {
                 CategoryMappingRange nonMappingRangeForGap = new CategoryMappingRange(
                     previousRangeEndExclusive,
-                    currentMappingRange.sourceRangeStartInclusive(),
+                    currentMappingRange.mappingRangeStartInclusive(),
                     0L
                 );
                 sortedAndCompleteRanges.add( nonMappingRangeForGap );
             }
             sortedAndCompleteRanges.add( currentMappingRange );
-            previousRangeEndExclusive = currentMappingRange.sourceRangeEndExclusive();
+            previousRangeEndExclusive = currentMappingRange.mappingRangeEndExclusive();
         }
 
         return sortedAndCompleteRanges;
@@ -38,7 +38,7 @@ class CategoryMap {
     long mapSourceToDestination( long source ) {
         return orderedMappingRanges
             .stream()
-            .filter( range -> range.isInSourceRange( source ) )
+            .filter( range -> range.isInMappingRange( source ) )
             .findFirst()
             .map( range -> range.mapSourceToDestination( source ) )
             .orElse( source ); // TODO Need to handle seed range after last mapping range

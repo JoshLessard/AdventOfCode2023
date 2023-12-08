@@ -1,30 +1,40 @@
 package com.adventofcode2023.dec05;
 
+import java.util.Optional;
+
 class CategoryMappingRange {
 
-    private final long sourceRangeStartInclusive;
-    private final long sourceRangeEndExclusive;
-    private final long sourceToDestinationDelta;
+    private final long mappingRangeStartInclusive;
+    private final long mappingRangeEndExclusive;
+    private final long mappingDelta;
 
-    CategoryMappingRange( long sourceRangeStartInclusive, long sourceRangeEndExclusive, long sourceToDestinationDelta ) {
-        this.sourceRangeStartInclusive = sourceRangeStartInclusive;
-        this.sourceRangeEndExclusive = sourceRangeEndExclusive;
-        this.sourceToDestinationDelta = sourceToDestinationDelta;
+    CategoryMappingRange( long mappingRangeStartInclusive, long mappingRangeEndExclusive, long mappingDelta ) {
+        this.mappingRangeStartInclusive = mappingRangeStartInclusive;
+        this.mappingRangeEndExclusive = mappingRangeEndExclusive;
+        this.mappingDelta = mappingDelta;
     }
 
-    long sourceRangeStartInclusive() {
-        return sourceRangeStartInclusive;
+    long mappingRangeStartInclusive() {
+        return mappingRangeStartInclusive;
     }
 
-    long sourceRangeEndExclusive() {
-        return sourceRangeEndExclusive;
+    long mappingRangeEndExclusive() {
+        return mappingRangeEndExclusive;
     }
 
-    boolean isInSourceRange( long source ) {
-        return sourceRangeStartInclusive <= source && source < sourceRangeEndExclusive;
+    boolean isInMappingRange( long source ) {
+        return mappingRangeStartInclusive <= source && source < mappingRangeEndExclusive;
     }
 
     long mapSourceToDestination( long source ) {
-        return source + sourceToDestinationDelta;
+        return source + mappingDelta;
+    }
+
+    Optional<CategoryRange> mapSourceToDestination( CategoryRange sourceRange ) {
+        long destinationRangeStartInclusive = Math.max( sourceRange.startInclusive(), mappingRangeStartInclusive );
+        long destinationRangeEndExclusive = Math.min( sourceRange.endExclusive(), mappingRangeEndExclusive );
+        return destinationRangeStartInclusive < destinationRangeEndExclusive
+            ? Optional.of( new CategoryRange( destinationRangeStartInclusive + mappingDelta, destinationRangeEndExclusive + mappingDelta ) )
+            : Optional.empty();
     }
 }
