@@ -1,5 +1,7 @@
 package com.adventofcode2023.dec05;
 
+import static java.util.Comparator.comparing;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,9 +20,13 @@ public class Main {
         try ( BufferedReader reader = new BufferedReader( new FileReader( "src/main/resources/dec05/input.txt" ) ) ) {
             List<Long> seeds = parseSeeds( reader );
             GardenMap gardenMap = parseGardenMap( reader );
-            long closestLocation = seeds.stream()
-                .mapToLong( gardenMap::mapSeedToLocation )
-                .min()
+            long closestLocation = seeds
+                .stream()
+                .map( seed -> new CategoryRange( seed, seed + 1 ) )
+                .map( gardenMap::mapSeedsToLocations )
+                .flatMap( List::stream )
+                .min( comparing( CategoryRange::startInclusive ) )
+                .map( CategoryRange::startInclusive )
                 .orElseThrow();
             System.out.println( "The closest location is " + closestLocation );
         }

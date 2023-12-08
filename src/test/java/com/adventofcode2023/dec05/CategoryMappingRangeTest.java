@@ -16,7 +16,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 10, 25 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 30, 50, DUMMY_DELTA );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertTrue( destinationRange.isEmpty() );
     }
@@ -26,7 +26,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 3, 27 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 27, 48, DUMMY_DELTA );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertTrue( destinationRange.isEmpty() );
     }
@@ -36,7 +36,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 31, 77 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 76, 100, 14 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertContains( new CategoryRange( 76 + 14, 77 + 14 ), destinationRange );
     }
@@ -46,7 +46,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 23, 45 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 30, 115, 12 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertContains( new CategoryRange( 30 + 12, 45 + 12 ), destinationRange );
     }
@@ -56,7 +56,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 19, 46 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 35, 46, 3 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertContains( new CategoryRange( 35 + 3, 46 + 3 ), destinationRange );
     }
@@ -66,7 +66,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 32, 78 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 40, 62, 5 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertContains( new CategoryRange( 40 + 5, 62 + 5 ), destinationRange );
     }
@@ -76,7 +76,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 33, 79 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 20, 98, 12 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertContains( new CategoryRange( 33 + 12, 79 + 12 ), destinationRange );
     }
@@ -86,7 +86,7 @@ public class CategoryMappingRangeTest {
         CategoryRange sourceRange = new CategoryRange( 52, 86 );
         CategoryMappingRange mappingRange = new CategoryMappingRange( 12, 38, 25 );
 
-        Optional<CategoryRange> destinationRange = mappingRange.mapSourceToDestination( sourceRange );
+        Optional<CategoryRange> destinationRange = mappingRange.mapSourcesToDestinations( sourceRange );
 
         assertTrue( destinationRange.isEmpty() );
     }

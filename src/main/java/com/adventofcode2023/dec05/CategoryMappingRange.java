@@ -30,7 +30,7 @@ class CategoryMappingRange {
         return source + mappingDelta;
     }
 
-    Optional<CategoryRange> mapSourceToDestination( CategoryRange sourceRange ) {
+    Optional<CategoryRange> mapSourcesToDestinations( CategoryRange sourceRange ) {
         long destinationRangeStartInclusive = Math.max( sourceRange.startInclusive(), mappingRangeStartInclusive );
         long destinationRangeEndExclusive = Math.min( sourceRange.endExclusive(), mappingRangeEndExclusive );
         return destinationRangeStartInclusive < destinationRangeEndExclusive
