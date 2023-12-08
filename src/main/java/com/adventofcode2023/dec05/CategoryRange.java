@@ -4,10 +4,10 @@ import java.util.Optional;
 
 record CategoryRange( long startInclusive, long endExclusive ) {
 
-    Optional<CategoryRange> subRange( long subRangeStartInclusive ) {
-        long start = Math.max( startInclusive, subRangeStartInclusive );
-        return start < endExclusive
-            ? Optional.of( new CategoryRange( start, endExclusive ) )
+    Optional<CategoryRange> rangeSuffix( long startInclusive ) {
+        long suffixStartInclusive = Math.max( this.startInclusive, startInclusive );
+        return suffixStartInclusive < endExclusive
+            ? Optional.of( new CategoryRange( suffixStartInclusive, endExclusive ) )
             : Optional.empty();
     }
 }

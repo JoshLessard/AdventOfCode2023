@@ -3,7 +3,6 @@ package com.adventofcode2023.dec05;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.Set;
 
 class GardenMap {
 
@@ -33,18 +32,6 @@ class GardenMap {
         this.humidityToLocationMap = humidityToLocationMap;
     }
 
-    long mapSeedToLocation( long seed ) {
-        long soil = seedToSoilMap.mapSourceToDestination( seed );
-        long fertilizer = soilToFertilizerMap.mapSourceToDestination( soil );
-        long water = fertilizerToWaterMap.mapSourceToDestination( fertilizer );
-        long light = waterToLightMap.mapSourceToDestination( water );
-        long temperature = lightToTemperatureMap.mapSourceToDestination( light );
-        long humidity = temperatureToHumidityMap.mapSourceToDestination( temperature );
-        long location = humidityToLocationMap.mapSourceToDestination( humidity );
-
-        return location;
-    }
-
     List<CategoryRange> mapSeedsToLocations( CategoryRange seeds ) {
         List<CategoryRange> soils = seedToSoilMap.mapSourcesToDestinations( seeds );
         List<CategoryRange> fertilizers = map( soils, soilToFertilizerMap );
@@ -62,6 +49,6 @@ class GardenMap {
             .stream()
             .map( map::mapSourcesToDestinations )
             .flatMap( List::stream )
-            .collect( toList() );
+            .toList();
     }
 }

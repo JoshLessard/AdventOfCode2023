@@ -37,15 +37,6 @@ class CategoryMap {
         return sortedAndCompleteRanges;
     }
 
-    long mapSourceToDestination( long source ) {
-        return orderedMappingRanges
-            .stream()
-            .filter( range -> range.isInMappingRange( source ) )
-            .findFirst()
-            .map( range -> range.mapSourceToDestination( source ) )
-            .orElse( source ); // TODO Need to handle seed range after last mapping range
-    }
-
     List<CategoryRange> mapSourcesToDestinations( CategoryRange sourceRange ) {
         List<CategoryRange> destinationRanges = orderedMappingRanges
             .stream()
@@ -53,7 +44,7 @@ class CategoryMap {
             .flatMap( Optional::stream )
             .collect( toList() );
         long mappedRangeEndExclusive = orderedMappingRanges.get( orderedMappingRanges.size() - 1 ).mappingRangeEndExclusive();
-        sourceRange.subRange( mappedRangeEndExclusive )
+        sourceRange.rangeSuffix( mappedRangeEndExclusive )
             .ifPresent( destinationRanges::add );
         return destinationRanges;
     }

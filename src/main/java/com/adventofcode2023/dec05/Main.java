@@ -20,7 +20,7 @@ public class Main {
         try ( BufferedReader reader = new BufferedReader( new FileReader( "src/main/resources/dec05/input.txt" ) ) ) {
             List<Long> seeds = parseSeeds( reader );
             GardenMap gardenMap = parseGardenMap( reader );
-            long closestLocation = seeds
+            long closestLocationPart1 = seeds
                 .stream()
                 .map( seed -> new CategoryRange( seed, seed + 1 ) )
                 .map( gardenMap::mapSeedsToLocations )
@@ -28,17 +28,17 @@ public class Main {
                 .min( comparing( CategoryRange::startInclusive ) )
                 .map( CategoryRange::startInclusive )
                 .orElseThrow();
-            System.out.println( "The closest location for Part 1 is " + closestLocation );
+            System.out.println( "The closest location for Part 1 is " + closestLocationPart1 );
 
             List<CategoryRange> seedRanges = toSeedRanges( seeds );
-            long closestLocation2 = seedRanges
+            long closestLocationPart2 = seedRanges
                 .stream()
                 .map( gardenMap::mapSeedsToLocations )
                 .flatMap( List::stream )
                 .min( comparing( CategoryRange::startInclusive ) )
                 .map( CategoryRange::startInclusive )
                 .orElseThrow();
-            System.out.println( "The closest location for Part 2 is " + closestLocation2 );
+            System.out.println( "The closest location for Part 2 is " + closestLocationPart2 );
         }
     }
 

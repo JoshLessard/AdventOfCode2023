@@ -22,14 +22,6 @@ class CategoryMappingRange {
         return mappingRangeEndExclusive;
     }
 
-    boolean isInMappingRange( long source ) {
-        return mappingRangeStartInclusive <= source && source < mappingRangeEndExclusive;
-    }
-
-    long mapSourceToDestination( long source ) {
-        return source + mappingDelta;
-    }
-
     Optional<CategoryRange> mapSourcesToDestinations( CategoryRange sourceRange ) {
         long destinationRangeStartInclusive = Math.max( sourceRange.startInclusive(), mappingRangeStartInclusive );
         long destinationRangeEndExclusive = Math.min( sourceRange.endExclusive(), mappingRangeEndExclusive );
