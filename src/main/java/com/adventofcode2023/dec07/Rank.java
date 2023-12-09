@@ -14,5 +14,6 @@ enum Rank {
     FOUR,
     THREE,
     TWO,
-    ONE;
+    ONE,
+    JOKER
 }

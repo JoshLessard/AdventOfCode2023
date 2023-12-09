@@ -1,7 +1,5 @@
 package com.adventofcode2023.dec07;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,9 +12,16 @@ public class Main {
     private static final Pattern PLAY_PATTERN = Pattern.compile( "^([^\s]+)\\s+(\\d+)$" );
 
     public static void main( String[] args ) throws IOException {
-        CamelCardsGame game = new CamelCardsGame( parsePlays() );
+        List<Play> plays = parsePlays();
+        CamelCardsGame game = new CamelCardsGame( plays );
+        System.out.println( "Total winnings without jokers: " + game.winnings() );
 
-        System.out.println( "Total winnings: " + game.winnings() );
+        List<Play> playsWithJokers = plays
+            .stream()
+            .map( Play::convertJacksToJokers )
+            .toList();
+        CamelCardsGame gameWithJokers = new CamelCardsGame( playsWithJokers );
+        System.out.println( "Total winnings with jokers: " + gameWithJokers.winnings() );
     }
 
     private static List<Play> parsePlays() throws IOException {
@@ -26,7 +31,7 @@ public class Main {
                 .map( PLAY_PATTERN::matcher )
                 .filter( Matcher::matches )
                 .map( Main::parsePlay )
-                .collect( toList() );
+                .toList();
         }
     }
 

@@ -29,20 +29,35 @@ class Hand implements Comparable<Hand> {
 
     private HandType determineType() {
         List<Long> uniqueRankCountsDescending = uniqueRankCountsDescending();
+        int jokerCount = countJokers();
         if ( uniqueRankCountsDescending.size() == 1 ) {
             return HandType.FIVE_OF_A_KIND;
         } else if ( uniqueRankCountsDescending.size() == 2 && uniqueRankCountsDescending.get( 0 ) == 4 ) {
-            return HandType.FOUR_OF_A_KIND;
-        } else if ( uniqueRankCountsDescending.size() == 2 && uniqueRankCountsDescending.get( 0 ) == 3 && uniqueRankCountsDescending.get( 1 ) == 2 ) {
-            return HandType.FULL_HOUSE;
+            return jokerCount == 4 || jokerCount == 1
+                ? HandType.FIVE_OF_A_KIND
+                : HandType.FOUR_OF_A_KIND;
+        } else if ( uniqueRankCountsDescending.size() == 2 && uniqueRankCountsDescending.get( 0 ) == 3 ) {
+            return jokerCount == 3 || jokerCount == 2
+                ? HandType.FIVE_OF_A_KIND
+                : HandType.FULL_HOUSE;
         } else if ( uniqueRankCountsDescending.size() == 3 && uniqueRankCountsDescending.get( 0 ) == 3 ) {
-            return HandType.THREE_OF_A_KIND;
+            return jokerCount == 3 || jokerCount == 1
+                ? HandType.FOUR_OF_A_KIND
+                : HandType.THREE_OF_A_KIND;
         } else if ( uniqueRankCountsDescending.size() == 3 && uniqueRankCountsDescending.get( 0 ) == 2 ) {
-            return HandType.TWO_PAIR;
+            return switch ( jokerCount ) {
+                case 2 -> HandType.FOUR_OF_A_KIND;
+                case 1 -> HandType.FULL_HOUSE;
+                default -> HandType.TWO_PAIR;
+            };
         } else if ( uniqueRankCountsDescending.size() == 4 ) {
-            return HandType.ONE_PAIR;
+            return jokerCount == 2 || jokerCount == 1
+                ? HandType.THREE_OF_A_KIND
+                : HandType.ONE_PAIR;
         } else if ( uniqueRankCountsDescending.size() == 5 ) {
-            return HandType.HIGH_CARD;
+            return jokerCount == 1
+                ? HandType.ONE_PAIR
+                : HandType.HIGH_CARD;
         }
         throw new IllegalStateException();
     }
@@ -55,6 +70,13 @@ class Hand implements Comparable<Hand> {
         List<Long> uniqueRankCountsDescending = new ArrayList<>( uniqueRankCounts );
         uniqueRankCountsDescending.sort( comparing( Long::longValue ).reversed() );
         return uniqueRankCountsDescending;
+    }
+
+    private int countJokers() {
+        return (int) ranks
+            .stream()
+            .filter( rank -> rank == Rank.JOKER )
+            .count();
     }
 
     HandType type() {
@@ -80,5 +102,13 @@ class Hand implements Comparable<Hand> {
         }
 
         return 0;
+    }
+
+    Hand convertJacksToJokers() {
+        List<Rank> ranksWithJacksConvertedToJokers = ranks
+            .stream()
+            .map( rank -> rank == Rank.JACK ? Rank.JOKER : rank )
+            .toList();
+        return new Hand( ranksWithJacksConvertedToJokers );
     }
 }
