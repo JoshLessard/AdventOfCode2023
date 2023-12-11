@@ -1,6 +1,7 @@
 package com.adventofcode2023.dec10;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,12 +62,45 @@ class PipeField {
     }
 
     int numberOfEnclosedTiles() {
+        // TODO Encapsulate main loop?
         List<Point> mainLoop = getMainLoop();
-        Direction scanDirection = getStartingScanDirection( mainLoop );
+        Set<Point> mainLoopAsSet = Set.copyOf( mainLoop );
+        Direction currentScanDirection = getStartingScanDirection( mainLoop, mainLoopAsSet );
+        Point previousPoint = null;
+        Set<Point> enclosedTileLocations = new HashSet<>();
 
-        START HERE
+        for ( Point mainLoopPoint : mainLoop ) {
+            enclosedTileLocations.addAll( enclosedTileLocations( mainLoopAsSet, mainLoopPoint, currentScanDirection ) );
 
-        return 0;
+            // TODO Duplication with counting tiles
+            if ( previousPoint != null && isCorner( mainLoopPoint ) ) {
+                Direction incomingDirection = mainLoopPoint.incomingDirectionFrom( previousPoint );
+                TileType mainLoopPointType = tileTypeByPoint.get( mainLoopPoint );
+                Turn turn = mainLoopPointType.turnWhenEnteringFrom( incomingDirection );
+                currentScanDirection = turn.applyTo( currentScanDirection );
+
+                // scan in the "scan direction" after turning the corner
+                enclosedTileLocations.addAll( enclosedTileLocations( mainLoopAsSet, mainLoopPoint, currentScanDirection ) );
+            }
+            previousPoint = mainLoopPoint;
+        }
+
+        return enclosedTileLocations.size();
+    }
+
+    private Set<Point> enclosedTileLocations( Set<Point> mainLoopAsSet, Point startingPoint, Direction scanDirection ) {
+        Set<Point> enclosedTileLocations = new HashSet<>();
+        Point currentPoint = startingPoint;
+        while ( true ) {
+            currentPoint = scanDirection.applyTo( currentPoint );
+            if ( mainLoopAsSet.contains( currentPoint ) ) {
+                // we've run into the other side of the loop
+                break;
+            }
+            enclosedTileLocations.add( currentPoint );
+        }
+
+        return enclosedTileLocations;
     }
 
     private List<Point> getMainLoop() {
@@ -85,16 +119,15 @@ class PipeField {
         return mainLoop;
     }
 
-    private Direction getStartingScanDirection( List<Point> mainLoop ) {
-        // TODO make sure we don't copy the loop points more than once...encapsulate?
-        Set<Point> mainLoopPointSet = Set.copyOf( mainLoop );
+    private Direction getStartingScanDirection( List<Point> mainLoop, Set<Point> mainLoopAsSet ) {
         Direction scanDirectionGuess = guessScanDirection( mainLoop );
         Direction currentScanDirection = scanDirectionGuess;
         Point previousPoint = null;
         for ( Point mainLoopPoint : mainLoop ) {
-            if ( reachesEdgeWithoutIntersecting( mainLoopPointSet, mainLoopPoint, currentScanDirection ) ) {
+            if ( reachesEdgeWithoutIntersecting( mainLoopAsSet, mainLoopPoint, currentScanDirection ) ) {
                 return scanDirectionGuess.oppositeDirection();
             }
+            // TODO Duplication with counting tiles
             if ( previousPoint != null && isCorner( mainLoopPoint ) ) {
                 Direction incomingDirection = mainLoopPoint.incomingDirectionFrom( previousPoint );
                 TileType mainLoopPointType = tileTypeByPoint.get( mainLoopPoint );
@@ -102,7 +135,7 @@ class PipeField {
                 currentScanDirection = turn.applyTo( currentScanDirection );
 
                 // scan in the guessed direction after turning the corner
-                if ( reachesEdgeWithoutIntersecting( mainLoopPointSet, mainLoopPoint, currentScanDirection ) ) {
+                if ( reachesEdgeWithoutIntersecting( mainLoopAsSet, mainLoopPoint, currentScanDirection ) ) {
                     return scanDirectionGuess.oppositeDirection();
                 }
             }
@@ -134,7 +167,11 @@ class PipeField {
     }
 
     private boolean isCorner( Point point ) {
-        return tileTypeByPoint.get( point ).isCorner();
+        TileType tileType = tileTypeByPoint.get( point );
+        if ( tileType == null ) {
+            throw new IllegalArgumentException( "Point at location " + point + " does not have a tile type configured." );
+        }
+        return tileType.isCorner();
     }
 
     private boolean isOutOfBounds( Point point ) {

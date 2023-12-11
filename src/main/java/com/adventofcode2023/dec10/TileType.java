@@ -52,6 +52,12 @@ enum TileType {
                 default -> throw new IllegalArgumentException();
             };
         }
+    },
+    GROUND( false ) {
+        @Override
+        Turn turnWhenEnteringFrom( Direction incomingDirection ) {
+            throw new IllegalArgumentException();
+        }
     };
 
     private final boolean isCorner;

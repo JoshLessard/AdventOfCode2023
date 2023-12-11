@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 class PipeFieldBuilder {
 
@@ -35,7 +36,8 @@ class PipeFieldBuilder {
             case 'J' -> Optional.of( TileType.NORTH_AND_WEST );
             case '7' -> Optional.of( TileType.SOUTH_AND_WEST );
             case 'F' -> Optional.of( TileType.SOUTH_AND_EAST );
-            case '.', 'S' -> Optional.empty();
+            case '.' -> Optional.of( TileType.GROUND );
+            case 'S' -> Optional.empty();
             default -> throw new IllegalArgumentException();
         };
     }
@@ -58,11 +60,11 @@ class PipeFieldBuilder {
     }
 
     PipeField build() {
-        addStartingPointNeighbours();
+        configureStartingPoint();
         return new PipeField( currentWidth, currentHeight, startingPoint, neighboursByPoint, tileTypeByPoint );
     }
 
-    private void addStartingPointNeighbours() {
+    private void configureStartingPoint() {
         List<Point> startingPointNeighbours = new ArrayList<>();
         startingPoint.neighbours()
             .filter( p ->
@@ -73,6 +75,24 @@ class PipeFieldBuilder {
         if ( startingPointNeighbours.size() != 2 ) {
             throw new IllegalStateException();
         }
-        neighboursByPoint.put( startingPoint, new Neighbours( startingPointNeighbours.get( 0 ), startingPointNeighbours.get( 1 ) ) );
+        Neighbours neighbours = new Neighbours( startingPointNeighbours.get( 0 ), startingPointNeighbours.get( 1 ) );
+        neighboursByPoint.put( startingPoint, neighbours );
+
+        Set<Direction> startingPointOutgoingDirections = neighbours.incomingDirectionsFrom( startingPoint );
+        tileTypeByPoint.put( startingPoint, tileTypeForOutgoingDirections( startingPointOutgoingDirections ) );
+    }
+
+    private TileType tileTypeForOutgoingDirections( Set<Direction> outgoingDirections ) {
+        if ( outgoingDirections.equals( Set.of( Direction.NORTH, Direction.EAST ) ) ) {
+            return TileType.NORTH_AND_EAST;
+        } else if ( outgoingDirections.equals( Set.of( Direction.NORTH, Direction.WEST ) ) ) {
+            return TileType.NORTH_AND_WEST;
+        } else if ( outgoingDirections.equals( Set.of( Direction.SOUTH, Direction.WEST ) ) ) {
+            return TileType.SOUTH_AND_WEST;
+        } else if ( outgoingDirections.equals( Set.of( Direction.SOUTH, Direction.EAST ) ) ) {
+            return TileType.SOUTH_AND_EAST;
+        }
+
+        throw new IllegalArgumentException();
     }
 }
