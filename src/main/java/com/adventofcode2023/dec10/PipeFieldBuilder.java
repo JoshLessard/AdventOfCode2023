@@ -8,21 +8,23 @@ import java.util.Optional;
 
 class PipeFieldBuilder {
 
-    private int currentY = 0;
+    private int currentWidth = 0;
+    private int currentHeight = 0;
     private Point startingPoint;
     private final Map<Point, Neighbours> neighboursByPoint = new HashMap<>();
     private final Map<Point, TileType> tileTypeByPoint = new HashMap<>();
 
     void parseRow( String input ) {
         for ( int currentX = 0; currentX < input.length(); ++currentX ) {
-            Point currentPoint = new Point( currentX, currentY );
+            Point currentPoint = new Point( currentX, currentHeight );
             char currentTile = input.charAt( currentX );
             toTileType( currentTile )
                 .ifPresent( tileType -> tileTypeByPoint.put( currentPoint, tileType ) );
             getNeighbours( currentPoint, currentTile )
                 .ifPresent( neighbours -> neighboursByPoint.put( currentPoint, neighbours ) );
         }
-        ++currentY;
+        currentWidth = Math.max( currentWidth, input.length() );
+        ++currentHeight;
     }
 
     private Optional<TileType> toTileType( char tile ) {
@@ -57,7 +59,7 @@ class PipeFieldBuilder {
 
     PipeField build() {
         addStartingPointNeighbours();
-        return new PipeField( startingPoint, neighboursByPoint, tileTypeByPoint );
+        return new PipeField( currentWidth, currentHeight, startingPoint, neighboursByPoint, tileTypeByPoint );
     }
 
     private void addStartingPointNeighbours() {

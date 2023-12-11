@@ -23,4 +23,34 @@ record Point( int x, int y ) {
     Stream<Point> neighbours() {
         return Stream.of( north(), south(), east(), west() );
     }
+
+    Direction incomingDirectionFrom( Point other ) {
+        if ( isNorthOf( other ) ) {
+            return Direction.NORTH;
+        } else if ( isSouthOf( other ) ) {
+            return Direction.SOUTH;
+        } else if ( isEastOf( other ) ) {
+            return Direction.EAST;
+        } else if ( isWestOf( other ) ) {
+            return Direction.WEST;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isNorthOf( Point other ) {
+        return x == other.x && y < other.y;
+    }
+
+    private boolean isSouthOf( Point other ) {
+        return x == other.x && y > other.y;
+    }
+
+    private boolean isEastOf( Point other ) {
+        return x > other.x && y == other.y;
+    }
+
+    private boolean isWestOf( Point other ) {
+        return x < other.x && y == other.y;
+    }
 }

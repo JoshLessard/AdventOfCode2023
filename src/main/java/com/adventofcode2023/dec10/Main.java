@@ -10,6 +10,9 @@ public class Main {
         PipeField pipeField = parsePipeField();
         int numberOfSteps = pipeField.largestNumberOfStepsFromStartingPoint();
         System.out.println( "Number of steps to farthest point: " + numberOfSteps );
+
+        int numberOfEnclosedTiles = pipeField.numberOfEnclosedTiles();
+        System.out.println( "Number of tiles enclosed in the main loop: " + numberOfEnclosedTiles );
     }
 
     private static PipeField parsePipeField() throws IOException {
