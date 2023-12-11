@@ -6,10 +6,12 @@ class PipeField {
 
     private final Point startingPoint;
     private final Map<Point, Neighbours> neighboursByPoint;
+    private final Map<Point, TileType> tileTypeByPoint;
 
-    PipeField( Point startingPoint, Map<Point, Neighbours> neighboursByPoint ) {
+    PipeField( Point startingPoint, Map<Point, Neighbours> neighboursByPoint, Map<Point, TileType> tileTypeByPoint ) {
         this.startingPoint = startingPoint;
         this.neighboursByPoint = Map.copyOf( neighboursByPoint );
+        this.tileTypeByPoint = Map.copyOf( tileTypeByPoint );
     }
 
     int largestNumberOfStepsFromStartingPoint() {

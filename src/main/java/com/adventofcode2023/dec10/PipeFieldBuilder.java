@@ -11,15 +11,31 @@ class PipeFieldBuilder {
     private int currentY = 0;
     private Point startingPoint;
     private final Map<Point, Neighbours> neighboursByPoint = new HashMap<>();
+    private final Map<Point, TileType> tileTypeByPoint = new HashMap<>();
 
     void parseRow( String input ) {
         for ( int currentX = 0; currentX < input.length(); ++currentX ) {
             Point currentPoint = new Point( currentX, currentY );
             char currentTile = input.charAt( currentX );
+            toTileType( currentTile )
+                .ifPresent( tileType -> tileTypeByPoint.put( currentPoint, tileType ) );
             getNeighbours( currentPoint, currentTile )
                 .ifPresent( neighbours -> neighboursByPoint.put( currentPoint, neighbours ) );
         }
         ++currentY;
+    }
+
+    private Optional<TileType> toTileType( char tile ) {
+        return switch ( tile ) {
+            case '|' -> Optional.of( TileType.VERTICAL );
+            case '-' -> Optional.of( TileType.HORIZONTAL );
+            case 'L' -> Optional.of( TileType.NORTH_AND_EAST );
+            case 'J' -> Optional.of( TileType.NORTH_AND_WEST );
+            case '7' -> Optional.of( TileType.SOUTH_AND_WEST );
+            case 'F' -> Optional.of( TileType.SOUTH_AND_EAST );
+            case '.', 'S' -> Optional.empty();
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private Optional<Neighbours> getNeighbours( Point currentPoint, char tile ) {
@@ -41,7 +57,7 @@ class PipeFieldBuilder {
 
     PipeField build() {
         addStartingPointNeighbours();
-        return new PipeField( startingPoint, neighboursByPoint );
+        return new PipeField( startingPoint, neighboursByPoint, tileTypeByPoint );
     }
 
     private void addStartingPointNeighbours() {
