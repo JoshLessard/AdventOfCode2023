@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
+// TODO Lots of refactoring opportunities in today's solution
 public class Main {
 
     public static void main( String[] args ) throws IOException  {
