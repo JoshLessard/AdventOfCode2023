@@ -1,7 +1,5 @@
 package com.adventofcode2023.dec12;
 
-import static java.util.Collections.emptyList;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -15,7 +13,7 @@ class ConditionRecord {
         this.conditions = List.copyOf( conditions );
     }
 
-    public long numberOfValidArrangements( List<Integer> contiguousDamagedGroupSizes ) {
+    public long numberOfValidArrangements( ContiguousGroupSizes contiguousDamagedGroupSizes ) {
         Collection<List<Condition>> permutations = permutationsForUnknownSprings( conditions );
         return permutations
             .stream()
@@ -48,12 +46,12 @@ class ConditionRecord {
         }
     }
 
-    private boolean isValid( List<Condition> permutation, List<Integer> expectedGroupSizes ) {
-        List<Integer> actualGroupSizes = findContiguousDamagedGroupSizes( permutation );
+    private boolean isValid( List<Condition> permutation, ContiguousGroupSizes expectedGroupSizes ) {
+        ContiguousGroupSizes actualGroupSizes = findContiguousDamagedGroupSizes( permutation );
         return actualGroupSizes.equals( expectedGroupSizes );
     }
 
-    private List<Integer> findContiguousDamagedGroupSizes( List<Condition> permutation ) {
+    private ContiguousGroupSizes findContiguousDamagedGroupSizes( List<Condition> permutation ) {
         List<Integer> actualGroupSizes = new ArrayList<>();
         int currentDamagedGroupSize = 0;
         for ( Condition condition : permutation) {
@@ -69,6 +67,6 @@ class ConditionRecord {
         if ( currentDamagedGroupSize > 0 ) {
             actualGroupSizes.add( currentDamagedGroupSize );
         }
-        return actualGroupSizes;
+        return new ContiguousGroupSizes( actualGroupSizes );
     }
 }

@@ -13,24 +13,39 @@ public class Main {
     private static final Pattern CONDITION_RECORD_PATTERN = Pattern.compile( "([.#?]+)\\s+([\\d,]+)" );
 
     public static void main( String[] args ) throws IOException {
+        List<ConditionRecordConfiguration> configurations = parseConditionRecordConfigurations();
+        long sumOfPossibleArrangements = configurations
+            .stream()
+            .mapToLong( Main::numberOfPossibleArrangements )
+            .sum();
+        System.out.println( "Number of possible arrangements: " + sumOfPossibleArrangements );
+    }
+
+    private static List<ConditionRecordConfiguration> parseConditionRecordConfigurations() throws IOException {
         try ( BufferedReader reader = new BufferedReader( new FileReader( "src/main/resources/dec12/input.txt" ) ) ) {
-            long sumOfPossibleArrangements = reader
+            return reader
                 .lines()
-                .mapToLong( Main::numberOfPossibleArrangements )
-                .sum();
-            System.out.println( "Number of possible arrangements: " + sumOfPossibleArrangements );
+                .map( Main::parseConditionRecordConfiguration )
+                .toList();
         }
     }
 
-    private static long numberOfPossibleArrangements( String input ) {
+    private static long numberOfPossibleArrangements( ConditionRecordConfiguration configuration ) {
+        ConditionRecord record = configuration.record();
+        ContiguousGroupSizes contiguousOperationalGroupSizes = configuration.groupSizes();
+
+        return record.numberOfValidArrangements( contiguousOperationalGroupSizes );
+    }
+
+    private static ConditionRecordConfiguration parseConditionRecordConfiguration( String input ) {
         Matcher matcher = CONDITION_RECORD_PATTERN.matcher( input );
         if ( ! matcher.matches() ) {
             throw new IllegalArgumentException( input );
         }
-        ConditionRecord record = parseConditionRecord( matcher.group( 1 ) );
-        List<Integer> contiguousOperationalGroupSizes = parseContiguousGroupSizes( matcher.group( 2 ) );
-
-        return record.numberOfValidArrangements( contiguousOperationalGroupSizes );
+        return new ConditionRecordConfiguration(
+            parseConditionRecord( matcher.group( 1 ) ),
+            parseContiguousGroupSizes( matcher.group( 2 ) )
+        );
     }
 
     private static ConditionRecord parseConditionRecord( String input ) {
@@ -41,10 +56,11 @@ public class Main {
         return new ConditionRecord( conditions );
     }
 
-    private static List<Integer> parseContiguousGroupSizes( String input ) {
-        return Arrays.stream( input.split( "," ) )
+    private static ContiguousGroupSizes parseContiguousGroupSizes( String input ) {
+        List<Integer> groupSizes = Arrays.stream( input.split( "," ) )
             .map( Integer::valueOf )
             .toList();
+        return new ContiguousGroupSizes( groupSizes );
     }
 
     private static Condition parseCondition( int character ) {
